@@ -21,17 +21,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.openweather.R
-import com.example.openweather.presentation.models.UpcomingWeatherItemUiModel
+import com.example.openweather.presentation.models.ForecastUiModel
 import com.example.openweather.presentation.models.WeatherCondition
 import com.example.openweather.presentation.ui.theme.OpenWeatherTheme
 import com.example.openweather.presentation.ui.theme.Rainy
 
 @Composable
 fun WeatherRow(
-    upcomingWeatherItemUiModel: UpcomingWeatherItemUiModel,
+    forecastUiModel: ForecastUiModel,
     weatherCondition: WeatherCondition,
     modifier: Modifier = Modifier
-) = with(upcomingWeatherItemUiModel) {
+) = with(forecastUiModel) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -81,7 +81,7 @@ fun getWeatherIcon(
 @Preview(showBackground = true)
 @Composable
 private fun WeatherRowPreview() {
-    val upcomingWeatherItemUiModel = UpcomingWeatherItemUiModel(
+    val forecastUiModel = ForecastUiModel(
         day = "Monday",
         current = "15"
     )
@@ -94,7 +94,7 @@ private fun WeatherRowPreview() {
                 .fillMaxSize()
         ) {
             WeatherRow(
-                upcomingWeatherItemUiModel = upcomingWeatherItemUiModel,
+                forecastUiModel = forecastUiModel,
                 weatherCondition = WeatherCondition.RAINY
             )
         }

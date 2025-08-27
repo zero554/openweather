@@ -1,6 +1,6 @@
 package com.example.openweather.presentation.models
 
-data class UpcomingWeatherItemUiModel(
+data class ForecastUiModel(
     val day: String,
     val current: String,
 )

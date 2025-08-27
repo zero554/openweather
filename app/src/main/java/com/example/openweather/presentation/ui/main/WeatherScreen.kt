@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -21,12 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.example.openweather.R
 import com.example.openweather.presentation.components.WeatherHeader
 import com.example.openweather.presentation.components.WeatherRow
 import com.example.openweather.presentation.components.WeatherTitle
-import com.example.openweather.presentation.models.UpcomingWeatherItemUiModel
+import com.example.openweather.presentation.models.ForecastUiModel
 import com.example.openweather.presentation.models.WeatherCondition
 import com.example.openweather.presentation.models.WeatherUiModel
 import com.example.openweather.presentation.ui.theme.Cloudy
@@ -37,9 +36,24 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun WeatherScreen(
-    weatherScreenUiState: WeatherScreenUiState,
+    weatherUiState: WeatherUiState,
     modifier: Modifier = Modifier
-) = with(weatherScreenUiState) {
+) = with(weatherUiState) {
+    if (isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+        ) { CircularProgressIndicator() }
+    } else ScreenContent(weatherUiState = this, modifier = modifier)
+
+}
+
+@Composable
+fun ScreenContent(
+    weatherUiState: WeatherUiState,
+    modifier: Modifier = Modifier
+) = with (weatherUiState){
     Column(
         modifier = modifier
             .background(color = getBackgroundColor(weatherUiModel.weatherCondition))
@@ -52,9 +66,9 @@ fun WeatherScreen(
 
         HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
 
-        upcomingDays.forEach {
+        fiveDayForecast.forEach {
             WeatherRow(
-                upcomingWeatherItemUiModel = it,
+                forecastUiModel = it,
                 weatherCondition = weatherUiModel.weatherCondition,
             )
         }
@@ -125,22 +139,22 @@ private fun WeatherScreenPreview() {
         weatherCondition = WeatherCondition.SUNNY,
     )
 
-    val weatherScreenUiState = WeatherScreenUiState(
+    val weatherUiState = WeatherUiState(
         weatherUiModel = weatherUiModel,
-        upcomingDays = persistentListOf(
-            UpcomingWeatherItemUiModel(
+        fiveDayForecast = persistentListOf(
+            ForecastUiModel(
                 day = "Tuesday",
                 current = "20"
-            ),UpcomingWeatherItemUiModel(
+            ),ForecastUiModel(
                 day = "Tuesday",
                 current = "20"
-            ),UpcomingWeatherItemUiModel(
+            ),ForecastUiModel(
                 day = "Tuesday",
                 current = "20"
-            ),UpcomingWeatherItemUiModel(
+            ),ForecastUiModel(
                 day = "Tuesday",
                 current = "20"
-            ),UpcomingWeatherItemUiModel(
+            ),ForecastUiModel(
                 day = "Tuesday",
                 current = "20"
             )
@@ -148,6 +162,6 @@ private fun WeatherScreenPreview() {
     )
 
     OpenWeatherTheme {
-        WeatherScreen(weatherScreenUiState = weatherScreenUiState)
+        WeatherScreen(weatherUiState = weatherUiState)
     }
 }
