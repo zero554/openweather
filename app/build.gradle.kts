@@ -70,6 +70,7 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
 
     // koin
     implementation(platform(libs.koin.bom))
@@ -79,6 +80,13 @@ dependencies {
 
     // Collections
     implementation(libs.kotlinx.collections)
+
+    // Retrofit
+    implementation(libs.retrofit.coroutines.adapter)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit)
+
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
