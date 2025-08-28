@@ -9,21 +9,39 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.openweather.presentation.ui.main.WeatherScreen
 import com.example.openweather.presentation.ui.main.WeatherViewModel
 import com.example.openweather.presentation.ui.theme.OpenWeatherTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val viewModel = koinViewModel<WeatherViewModel>()
+
+            val permissionState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
+
+            LaunchedEffect(permissionState.status) {
+                if (permissionState.status.isGranted) {
+                    viewModel.fetchLocation()
+                } else {
+                    permissionState.launchPermissionRequest()
+                }
+            }
+
+
             val weatherUiState by viewModel.weatherUiState.collectAsStateWithLifecycle()
 
             OpenWeatherTheme {
