@@ -10,16 +10,21 @@ import retrofit2.HttpException
 import java.io.IOException
 
 interface GetCurrentWeatherUseCase {
-    operator fun invoke(): Flow<Resource<WeatherUiModel>>
+    operator fun invoke(latitude: String, longitude: String): Flow<Resource<WeatherUiModel>>
 }
 
 class GetCurrentWeatherUseCaseImpl(
     private val openWeatherRepository: OpenWeatherRepository
 ): GetCurrentWeatherUseCase {
-    override fun invoke(): Flow<Resource<WeatherUiModel>> = flow {
+    override fun invoke(latitude: String, longitude: String): Flow<Resource<WeatherUiModel>> = flow {
         try {
             emit(Resource.Loading())
-            val weather = openWeatherRepository.getCurrentWeather().toWeatherUiModel()
+            val weather = openWeatherRepository
+                .getCurrentWeather(
+                    latitude = latitude,
+                    longitude = longitude
+                )
+                .toWeatherUiModel()
             emit(Resource.Success(data = weather))
         } catch (exception: HttpException) {
             emit(Resource.Error(exception.localizedMessage ?: "An unexpected error occurred") )

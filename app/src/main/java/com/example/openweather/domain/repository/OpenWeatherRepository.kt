@@ -5,7 +5,7 @@ import com.example.openweather.data.remote.dto.WeatherDto
 
 interface OpenWeatherRepository {
 
-    suspend fun getFiveDayForecast(): WeatherDto
+    suspend fun getFiveDayForecast(latitude: String, longitude: String): WeatherDto
 
-    suspend fun getCurrentWeather(): CurrentWeatherDto
+    suspend fun getCurrentWeather(latitude: String, longitude: String): CurrentWeatherDto
 }

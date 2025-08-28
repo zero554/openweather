@@ -3,9 +3,9 @@ package com.example.openweather.presentation.ui.main
 import androidx.lifecycle.viewModelScope
 import com.example.openweather.BaseViewModel
 import com.example.openweather.common.Resource
+import com.example.openweather.domain.usecase.GetCurrentLocationUseCase
 import com.example.openweather.domain.usecase.GetCurrentWeatherUseCase
 import com.example.openweather.domain.usecase.GetFiveDayForecastUseCase
-import com.example.openweather.presentation.models.WeatherUiModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.update
 
 
 class WeatherViewModel(
+    private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
     private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
     private val getFiveDayForecastUseCase: GetFiveDayForecastUseCase
 ) : BaseViewModel() {
@@ -24,14 +25,10 @@ class WeatherViewModel(
     private val _weatherUiState: MutableStateFlow<WeatherUiState?> = MutableStateFlow(null)
     val weatherUiState: StateFlow<WeatherUiState?> by ::_weatherUiState
 
-    init {
-        getWeatherData()
-    }
-
-    private fun getWeatherData() {
+    private fun getWeatherData(latitude: String, longitude: String) {
         combine(
-            getCurrentWeatherUseCase(),
-            getFiveDayForecastUseCase()
+            getCurrentWeatherUseCase(latitude = latitude, longitude = longitude),
+            getFiveDayForecastUseCase(latitude = latitude, longitude = longitude),
         ) { currentDay, fiveDayForecast ->
             val isLoading = currentDay is Resource.Loading || fiveDayForecast is Resource.Loading
             val errorMsg = listOfNotNull(
@@ -51,5 +48,11 @@ class WeatherViewModel(
         }.onEach { uiState ->
             _weatherUiState.update { uiState }
         }.launchIn(viewModelScope)
+    }
+
+    fun fetchLocation() = runCoroutine {
+        getCurrentLocationUseCase().collect {
+            getWeatherData(latitude = it.latitude, longitude = it.longitude)
+        }
     }
 }

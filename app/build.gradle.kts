@@ -87,6 +87,9 @@ dependencies {
     implementation(libs.retrofit)
 
     implementation(libs.kotlinx.datetime)
+    implementation(libs.android.gms)
+    implementation(libs.google.accompanist)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

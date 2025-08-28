@@ -4,6 +4,8 @@ import com.example.openweather.common.Constants.BASE_URL
 import com.example.openweather.data.remote.OpenWeatherApiService
 import com.example.openweather.data.repository.OpenWeatherRepositoryImpl
 import com.example.openweather.domain.repository.OpenWeatherRepository
+import com.example.openweather.domain.usecase.GetCurrentLocationUseCase
+import com.example.openweather.domain.usecase.GetCurrentLocationUseCaseImpl
 import com.example.openweather.domain.usecase.GetCurrentWeatherUseCase
 import com.example.openweather.domain.usecase.GetCurrentWeatherUseCaseImpl
 import com.example.openweather.domain.usecase.GetFiveDayForecaseUseCaseImpl
@@ -28,6 +30,7 @@ val module = module {
     singleOf(::OpenWeatherRepositoryImpl).bind<OpenWeatherRepository>()
     singleOf(::GetFiveDayForecaseUseCaseImpl).bind<GetFiveDayForecastUseCase>()
     singleOf(::GetCurrentWeatherUseCaseImpl).bind<GetCurrentWeatherUseCase>()
+    singleOf(::GetCurrentLocationUseCaseImpl).bind<GetCurrentLocationUseCase>()
 
     viewModelOf(::WeatherViewModel)
 }

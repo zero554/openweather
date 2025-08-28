@@ -13,18 +13,21 @@ import retrofit2.HttpException
 import java.io.IOException
 
 interface GetFiveDayForecastUseCase {
-    operator fun invoke(): Flow<Resource<ImmutableList<ForecastUiModel>>>
+    operator fun invoke(latitude: String, longitude: String): Flow<Resource<ImmutableList<ForecastUiModel>>>
 }
 
 class GetFiveDayForecaseUseCaseImpl(
     private val openWeatherRepository: OpenWeatherRepository
 ): GetFiveDayForecastUseCase {
-    override fun invoke(): Flow<Resource<ImmutableList<ForecastUiModel>>> = flow {
+    override fun invoke(latitude: String, longitude: String): Flow<Resource<ImmutableList<ForecastUiModel>>> = flow {
         try {
             emit(Resource.Loading())
 
             val fiveDayForecast = openWeatherRepository
-                .getFiveDayForecast()
+                .getFiveDayForecast(
+                    latitude = latitude,
+                    longitude = longitude
+                )
                 .list
                 .onePerDay()
                 .map { it.toForeCastUiModel() }
