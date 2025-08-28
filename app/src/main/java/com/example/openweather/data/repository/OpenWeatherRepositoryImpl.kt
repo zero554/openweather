@@ -2,8 +2,6 @@ package com.example.openweather.data.repository
 
 import com.example.openweather.common.Resource
 import com.example.openweather.data.remote.OpenWeatherApiService
-import com.example.openweather.data.remote.dto.CurrentWeatherDto
-import com.example.openweather.data.remote.dto.WeatherDto
 import com.example.openweather.domain.mappers.onePerDay
 import com.example.openweather.domain.mappers.toForeCastUiModel
 import com.example.openweather.domain.mappers.toWeatherUiModel

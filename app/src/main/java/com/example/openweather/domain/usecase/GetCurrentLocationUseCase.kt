@@ -25,21 +25,20 @@ class GetCurrentLocationUseCaseImpl(
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
             // Step 1: Try last known location
-            var location = fusedLocationClient.lastLocation.await()
+            var location = fusedLocationClient.lastLocation
 
             // Step 2: If last location is null, request a fresh one
-            if (location == null) {
+            if (location.await() == null) {
                 location = fusedLocationClient
                     .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                    .await()
             }
 
             // Step 3: Update StateFlow
-            location?.let {
+            location.await()?.let {
                 emit(
                     Location(
-                        latitude = location.latitude.toInt().toString(),
-                        longitude = location.longitude.toInt().toString()
+                        latitude = it.latitude.toInt().toString(),
+                        longitude = it.longitude.toInt().toString()
                     )
                 )
             }
