@@ -1,1 +1,22 @@
-/build
+# Gradle
+.gradle/
+build/
+
+# Local configuration
+local.properties
+
+# IDE files
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# Android generated
+captures/
+.externalNativeBuild/
+.cxx/
+
+# OS junk
+.DS_Store
+Thumbs.db

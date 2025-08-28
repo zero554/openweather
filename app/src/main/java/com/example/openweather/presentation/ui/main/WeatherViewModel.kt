@@ -34,16 +34,31 @@ class WeatherViewModel(
             getFiveDayForecastUseCase()
         ) { currentDay, fiveDayForecast ->
             val isLoading = currentDay is Resource.Loading || fiveDayForecast is Resource.Loading
+
             val errorMsg = listOfNotNull(
                 (currentDay as? Resource.Error)?.message,
                 (fiveDayForecast as? Resource.Error)?.message
             ).joinToString("\n").ifBlank { null }
-            val weatherUiModel = (currentDay as? Resource.Success)?.data
-            weatherUiModel?.let {
-                WeatherUiState(
-                    isLoading = isLoading,
-                    errorMessage = errorMsg,
-                    weatherUiModel = it,
+
+            return@combine when {
+                isLoading -> {
+                    WeatherUiState(
+                        weatherUiModel = WeatherUiModel(),
+                        fiveDayForecast = persistentListOf(),
+                        isLoading = true
+                    )
+                }
+
+                errorMsg != null -> {
+                    WeatherUiState(
+                        errorMessage = errorMsg,
+                        weatherUiModel = WeatherUiModel(),
+                        fiveDayForecast = persistentListOf(),
+                    )
+                }
+
+                else ->  WeatherUiState(
+                    weatherUiModel = (currentDay as? Resource.Success)?.data ?: WeatherUiModel(),
                     fiveDayForecast = (fiveDayForecast as? Resource.Success)?.data
                         ?: persistentListOf()
                 )

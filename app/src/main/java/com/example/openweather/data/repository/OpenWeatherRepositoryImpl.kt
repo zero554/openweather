@@ -24,7 +24,7 @@ class OpenWeatherRepositoryImpl(
     override suspend fun getCurrentWeather(): CurrentWeatherDto {
         return withContext(Dispatchers.IO) {
             openWeatherApiService.getCurrentWeather(
-                latitude = "35",
+                latitude = "10",
                 longitude = "18"
             )
         }
