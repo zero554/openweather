@@ -4,12 +4,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.openweather.BaseViewModel
 import com.example.openweather.common.Resource
 import com.example.openweather.domain.usecase.GetCurrentLocationUseCase
-import com.example.openweather.domain.usecase.GetCurrentWeatherUseCase
-import com.example.openweather.domain.usecase.GetFiveDayForecastUseCase
+import com.example.openweather.domain.usecase.GetWeatherUseCase
+import com.example.openweather.presentation.models.Location
+import com.example.openweather.presentation.models.WeatherUiModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
@@ -18,41 +18,36 @@ import kotlinx.coroutines.flow.update
 
 class WeatherViewModel(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
-    private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-    private val getFiveDayForecastUseCase: GetFiveDayForecastUseCase
+    private val getWeatherUseCase: GetWeatherUseCase
 ) : BaseViewModel() {
 
     private val _weatherUiState: MutableStateFlow<WeatherUiState?> = MutableStateFlow(null)
     val weatherUiState: StateFlow<WeatherUiState?> by ::_weatherUiState
 
-    private fun getWeatherData(latitude: String, longitude: String) {
-        combine(
-            getCurrentWeatherUseCase(latitude = latitude, longitude = longitude),
-            getFiveDayForecastUseCase(latitude = latitude, longitude = longitude),
-        ) { currentDay, fiveDayForecast ->
-            val isLoading = currentDay is Resource.Loading || fiveDayForecast is Resource.Loading
-            val errorMsg = listOfNotNull(
-                (currentDay as? Resource.Error)?.message,
-                (fiveDayForecast as? Resource.Error)?.message
-            ).joinToString("\n").ifBlank { null }
-            val weatherUiModel = (currentDay as? Resource.Success)?.data
-            weatherUiModel?.let {
-                WeatherUiState(
-                    isLoading = isLoading,
-                    errorMessage = errorMsg,
-                    weatherUiModel = it,
-                    fiveDayForecast = (fiveDayForecast as? Resource.Success)?.data
-                        ?: persistentListOf()
-                )
+    private fun getWeatherData(location: Location) = runCoroutine {
+        getWeatherUseCase(
+            location = location
+        ).onEach { resource ->
+            when(resource) {
+                is Resource.Loading -> {
+                    _weatherUiState.update { WeatherUiState(isLoading = true) }
+                }
+                is Resource.Error -> {
+                    _weatherUiState.update { WeatherUiState(errorMessage = resource.message) }
+                }
+                is Resource.Success -> _weatherUiState.update {
+                    WeatherUiState(
+                        weatherUiModel = resource.data?.current ?: WeatherUiModel(),
+                        fiveDayForecast = resource.data?.fiveDayForecast ?: persistentListOf()
+                    )
+                }
             }
-        }.onEach { uiState ->
-            _weatherUiState.update { uiState }
         }.launchIn(viewModelScope)
     }
 
     fun fetchLocation() = runCoroutine {
         getCurrentLocationUseCase().collect {
-            getWeatherData(latitude = it.latitude, longitude = it.longitude)
+            getWeatherData(it)
         }
     }
 }

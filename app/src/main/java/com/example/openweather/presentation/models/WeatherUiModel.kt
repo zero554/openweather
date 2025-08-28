@@ -1,8 +1,8 @@
 package com.example.openweather.presentation.models
 
 data class WeatherUiModel(
-    val current: String,
-    val min: String,
-    val max: String,
-    val weatherCondition: WeatherCondition,
+    val current: String = "",
+    val min: String = "",
+    val max: String = "",
+    val weatherCondition: WeatherCondition = WeatherCondition.RAINY,
 )

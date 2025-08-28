@@ -6,8 +6,10 @@ import androidx.annotation.RequiresPermission
 import com.example.openweather.presentation.models.Location
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 
 interface GetCurrentLocationUseCase {
@@ -44,6 +46,6 @@ class GetCurrentLocationUseCaseImpl(
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
 }
