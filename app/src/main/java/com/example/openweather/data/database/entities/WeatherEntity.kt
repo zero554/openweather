@@ -1,11 +1,14 @@
 package com.example.openweather.data.database.entities
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
-@Entity(tableName = "weather")
+@Entity(
+    tableName = "weather",
+    primaryKeys = ["latitude", "longitude"]
+)
 data class WeatherEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    val latitude: Double,
+    val longitude: Double,
     val lastUpdated: Long,
     val current: String,
     val min: String,

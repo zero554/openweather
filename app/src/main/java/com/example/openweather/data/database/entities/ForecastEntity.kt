@@ -9,15 +9,16 @@ import androidx.room.PrimaryKey
     tableName = "forecasts",
     foreignKeys = [ForeignKey(
         entity = WeatherEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["weatherId"],
+        parentColumns = ["latitude", "longitude"],
+        childColumns = ["weatherLatitude", "weatherLongitude"],
         onDelete = ForeignKey.CASCADE
     )],
-    indices = [Index("weatherId")]
+    indices = [Index("weatherLatitude", "weatherLongitude")]
 )
 data class ForecastEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long,
-    val weatherId: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val weatherLatitude: Double,
+    val weatherLongitude: Double,
     val lastUpdated: Long,
     val day: String,
     val current: String

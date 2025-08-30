@@ -27,7 +27,7 @@ import com.example.openweather.presentation.components.WeatherRow
 import com.example.openweather.presentation.components.WeatherTitle
 import com.example.openweather.presentation.models.ForecastUiModel
 import com.example.openweather.presentation.models.WeatherCondition
-import com.example.openweather.presentation.models.CurrentWeatherUiModel
+import com.example.openweather.presentation.models.WeatherUiModel
 import com.example.openweather.presentation.ui.theme.Cloudy
 import com.example.openweather.presentation.ui.theme.OpenWeatherTheme
 import com.example.openweather.presentation.ui.theme.Rainy
@@ -56,20 +56,20 @@ fun ScreenContent(
 ) = with (weatherUiState){
     Column(
         modifier = modifier
-            .background(color = getBackgroundColor(currentWeatherUiModel.weatherCondition))
+            .background(color = getBackgroundColor(weatherUiModel.weatherCondition))
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
-        WeatherHeaderBackground(currentWeatherUiModel)
+        WeatherHeaderBackground(weatherUiModel)
 
-        WeatherTitle(currentWeatherUiModel)
+        WeatherTitle(weatherUiModel)
 
         HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
 
         fiveDayForecast.forEach {
             WeatherRow(
                 forecastUiModel = it,
-                weatherCondition = currentWeatherUiModel.weatherCondition,
+                weatherCondition = weatherUiModel.weatherCondition,
             )
         }
     }
@@ -77,9 +77,9 @@ fun ScreenContent(
 
 @Composable
 fun WeatherHeaderBackground(
-    currentWeatherUiModel: CurrentWeatherUiModel,
+    weatherUiModel: WeatherUiModel,
     modifier: Modifier = Modifier
-) = with(currentWeatherUiModel) {
+) = with(weatherUiModel) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -93,7 +93,7 @@ fun WeatherHeaderBackground(
                 .fillMaxWidth()
         )
 
-        WeatherHeader(currentWeatherUiModel)
+        WeatherHeader(weatherUiModel)
     }
 }
 
@@ -132,7 +132,7 @@ fun getBackgroundImage(
 @Preview
 @Composable
 private fun WeatherScreenPreview() {
-    val currentWeatherUiModel = CurrentWeatherUiModel(
+    val weatherUiModel = WeatherUiModel(
         min = "10",
         current = "25",
         max = "17",
@@ -140,7 +140,7 @@ private fun WeatherScreenPreview() {
     )
 
     val weatherUiState = WeatherUiState(
-        currentWeatherUiModel = currentWeatherUiModel,
+        weatherUiModel = weatherUiModel,
         fiveDayForecast = persistentListOf(
             ForecastUiModel(
                 day = "Tuesday",

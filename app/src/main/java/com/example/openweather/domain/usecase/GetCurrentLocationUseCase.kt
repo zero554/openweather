@@ -37,8 +37,8 @@ class GetCurrentLocationUseCaseImpl(
             location.await()?.let {
                 emit(
                     Location(
-                        latitude = it.latitude.toInt().toString(),
-                        longitude = it.longitude.toInt().toString()
+                        latitude = it.latitude,
+                        longitude = it.longitude
                     )
                 )
             }

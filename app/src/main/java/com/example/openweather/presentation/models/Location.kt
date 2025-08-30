@@ -1,6 +1,6 @@
 package com.example.openweather.presentation.models
 
 data class Location(
-    val latitude: String,
-    val longitude: String
+    val latitude: Double,
+    val longitude: Double
 )

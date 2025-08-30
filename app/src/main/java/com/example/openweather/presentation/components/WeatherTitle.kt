@@ -18,15 +18,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.openweather.presentation.models.WeatherCondition
-import com.example.openweather.presentation.models.CurrentWeatherUiModel
+import com.example.openweather.presentation.models.WeatherUiModel
 import com.example.openweather.presentation.ui.theme.OpenWeatherTheme
 import com.example.openweather.presentation.ui.theme.Rainy
 
 @Composable
 fun WeatherTitle(
-    currentWeatherUiModel: CurrentWeatherUiModel,
+    weatherUiModel: WeatherUiModel,
     modifier: Modifier = Modifier
-) = with(currentWeatherUiModel) {
+) = with(weatherUiModel) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -79,7 +79,7 @@ fun RowScope.Content(
 @Preview(showBackground = true)
 @Composable
 private fun WeatherTitlePreview() {
-    val currentWeatherUiModel = CurrentWeatherUiModel(
+    val weatherUiModel = WeatherUiModel(
         min = "10",
         current = "15",
         max = "17",
@@ -93,7 +93,7 @@ private fun WeatherTitlePreview() {
                 .background(Rainy)
                 .fillMaxSize()
         ) {
-            WeatherTitle(currentWeatherUiModel)
+            WeatherTitle(weatherUiModel)
         }
     }
 }

@@ -2,16 +2,22 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "aed1c2dd80288799ec638eba1c72f6c8",
+    "identityHash": "b56914c11270d740381c48941ab95dbe",
     "entities": [
       {
         "tableName": "weather",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `lastUpdated` INTEGER NOT NULL, `current` TEXT NOT NULL, `min` TEXT NOT NULL, `max` TEXT NOT NULL, `weatherCondition` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `lastUpdated` INTEGER NOT NULL, `current` TEXT NOT NULL, `min` TEXT NOT NULL, `max` TEXT NOT NULL, `weatherCondition` TEXT NOT NULL, PRIMARY KEY(`latitude`, `longitude`))",
         "fields": [
           {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -46,15 +52,16 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
-            "id"
+            "latitude",
+            "longitude"
           ]
         }
       },
       {
         "tableName": "forecasts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weatherId` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `day` TEXT NOT NULL, `current` TEXT NOT NULL, FOREIGN KEY(`weatherId`) REFERENCES `weather`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `weatherLatitude` REAL NOT NULL, `weatherLongitude` REAL NOT NULL, `lastUpdated` INTEGER NOT NULL, `day` TEXT NOT NULL, `current` TEXT NOT NULL, FOREIGN KEY(`weatherLatitude`, `weatherLongitude`) REFERENCES `weather`(`latitude`, `longitude`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -63,9 +70,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "weatherId",
-            "columnName": "weatherId",
-            "affinity": "INTEGER",
+            "fieldPath": "weatherLatitude",
+            "columnName": "weatherLatitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weatherLongitude",
+            "columnName": "weatherLongitude",
+            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -95,13 +108,14 @@
         },
         "indices": [
           {
-            "name": "index_forecasts_weatherId",
+            "name": "index_forecasts_weatherLatitude_weatherLongitude",
             "unique": false,
             "columnNames": [
-              "weatherId"
+              "weatherLatitude",
+              "weatherLongitude"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_forecasts_weatherId` ON `${TABLE_NAME}` (`weatherId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_forecasts_weatherLatitude_weatherLongitude` ON `${TABLE_NAME}` (`weatherLatitude`, `weatherLongitude`)"
           }
         ],
         "foreignKeys": [
@@ -110,10 +124,12 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "weatherId"
+              "weatherLatitude",
+              "weatherLongitude"
             ],
             "referencedColumns": [
-              "id"
+              "latitude",
+              "longitude"
             ]
           }
         ]
@@ -121,7 +137,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aed1c2dd80288799ec638eba1c72f6c8')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b56914c11270d740381c48941ab95dbe')"
     ]
   }
 }

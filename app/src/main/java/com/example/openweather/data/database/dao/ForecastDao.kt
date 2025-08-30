@@ -22,6 +22,6 @@ interface ForecastDao {
     @Query("SELECT * FROM forecasts")
     fun getAllForecastedWeather(): Flow<List<ForecastEntity>>
 
-    @Query("SELECT * FROM forecasts WHERE weatherId = :weatherId ORDER BY lastUpdated ASC")
-    fun getForecastsForWeather(weatherId: Long): Flow<List<ForecastEntity>>
+    @Query("SELECT * FROM forecasts WHERE weatherLatitude = :latitude AND weatherLongitude = :longitude ORDER BY lastUpdated ASC")
+    fun getForecastsForWeather(latitude: Double, longitude: Double): Flow<List<ForecastEntity>>
 }
