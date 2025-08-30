@@ -9,11 +9,15 @@ import com.example.openweather.data.database.dao.WeatherWithForecastDao
 import com.example.openweather.data.remote.OpenWeatherApiService
 import com.example.openweather.data.repository.OpenWeatherRepositoryImpl
 import com.example.openweather.domain.repository.OpenWeatherRepository
+import com.example.openweather.domain.usecase.FavouriteWeatherUseCase
+import com.example.openweather.domain.usecase.FavouriteWeatherUseCaseImpl
 import com.example.openweather.domain.usecase.GetCurrentLocationUseCase
 import com.example.openweather.domain.usecase.GetCurrentLocationUseCaseImpl
 import com.example.openweather.domain.usecase.GetWeatherUseCase
 import com.example.openweather.domain.usecase.GetWeatherUseCaseImpl
-import com.example.openweather.presentation.ui.main.WeatherViewModel
+import com.example.openweather.presentation.ui.favourites.FavouriteViewModel
+import com.example.openweather.presentation.ui.main.MainViewModel
+import com.example.openweather.presentation.ui.weather.WeatherViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
@@ -33,8 +37,11 @@ val module = module {
     singleOf(::OpenWeatherRepositoryImpl).bind<OpenWeatherRepository>()
     singleOf(::GetCurrentLocationUseCaseImpl).bind<GetCurrentLocationUseCase>()
     singleOf(::GetWeatherUseCaseImpl).bind<GetWeatherUseCase>()
+    singleOf(::FavouriteWeatherUseCaseImpl).bind<FavouriteWeatherUseCase>()
 
+    viewModelOf(::MainViewModel)
     viewModelOf(::WeatherViewModel)
+    viewModelOf(::FavouriteViewModel)
 
     single<OpenWeatherDatabase> {
         Room.databaseBuilder(

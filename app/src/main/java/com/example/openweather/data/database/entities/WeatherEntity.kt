@@ -13,5 +13,6 @@ data class WeatherEntity(
     val current: String,
     val min: String,
     val max: String,
-    val weatherCondition: String
+    val weatherCondition: String,
+    val isFavourite: Boolean = false
 )

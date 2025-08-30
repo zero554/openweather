@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.ui.text.google.fonts)
 
+    implementation("androidx.palette:palette:1.0.0")
+
+
 
     // Added dependencies
     implementation(libs.kotlinx.serialization)

@@ -9,14 +9,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.openweather.presentation.ui.main.WeatherScreen
-import com.example.openweather.presentation.ui.main.WeatherViewModel
+import androidx.navigation.NavHostController
+import com.example.openweather.presentation.models.navigation.NavigationEvent
+import com.example.openweather.presentation.models.navigation.Screen
+import com.example.openweather.presentation.models.scaffold.LocalScaffoldViewState
+import com.example.openweather.presentation.models.scaffold.ScaffoldViewState
+import com.example.openweather.presentation.ui.App
+import com.example.openweather.presentation.ui.weather.WeatherScreen
+import com.example.openweather.presentation.ui.weather.WeatherViewModel
 import com.example.openweather.presentation.ui.theme.OpenWeatherTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -29,48 +36,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val viewModel = koinViewModel<WeatherViewModel>()
+            val scaffoldViewState = remember { ScaffoldViewState() }
 
-            val permissionState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
-
-            LaunchedEffect(permissionState.status) {
-                if (permissionState.status.isGranted) {
-                    viewModel.fetchLocation()
-                } else {
-                    permissionState.launchPermissionRequest()
-                }
-            }
-
-
-            val weatherUiState by viewModel.weatherUiState.collectAsStateWithLifecycle()
-
-            OpenWeatherTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    weatherUiState?.let {
-                        WeatherScreen(
-                            weatherUiState = it,
-                            modifier = Modifier
-                                .padding(innerPadding)
-                        )
-                    }
-                }
+            CompositionLocalProvider(LocalScaffoldViewState provides scaffoldViewState) {
+                App()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    OpenWeatherTheme {
-        Greeting("Android")
+fun <T> onUiEvent(navController: NavHostController, event: T) {
+    when(event) {
+        is NavigationEvent.NavigationDrawerEvent.Favourites -> {
+            navController.navigate(Screen.Favourites)
+        }
+        is NavigationEvent.LocationClick -> {
+            navController.navigate(Screen.Weather)
+        }
     }
 }

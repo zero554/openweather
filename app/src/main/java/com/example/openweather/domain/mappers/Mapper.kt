@@ -77,6 +77,10 @@ fun CurrentWeatherDto.toWeatherEntity(
 
 fun WeatherEntity.toWeatherUiModel(): WeatherUiModel {
     return WeatherUiModel(
+        latitude = latitude,
+        longitude = longitude,
+        lastUpdated = lastUpdated,
+        isFavourite = isFavourite,
         current = current,
         min = min,
         max = max,
@@ -91,10 +95,29 @@ fun ForecastEntity.toForecastUiModel(): ForecastUiModel {
     )
 }
 
+fun WeatherUiModel.toWeatherEntity(): WeatherEntity {
+    return WeatherEntity(
+        latitude = latitude,
+        longitude = longitude,
+        lastUpdated = lastUpdated,
+        isFavourite = isFavourite,
+        current = current,
+        min = min,
+        max = max,
+        weatherCondition = getWeatherConditionStringFromEnum(weatherCondition)
+    )
+}
+
 private fun getWeatherCondition(value: String) = when(value) {
     "Rain" -> WeatherCondition.RAINY
     "Clouds" -> WeatherCondition.CLOUDY
     else -> WeatherCondition.SUNNY
+}
+
+private fun getWeatherConditionStringFromEnum(weatherCondition: WeatherCondition) = when(weatherCondition) {
+    WeatherCondition.RAINY -> "Rain"
+    WeatherCondition.CLOUDY -> "Clouds"
+    else -> "Sun"
 }
 
 fun List<WeatherItem>.onePerDay(): List<WeatherItem> {
