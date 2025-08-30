@@ -7,7 +7,7 @@ import com.example.openweather.domain.mappers.toForeCastUiModel
 import com.example.openweather.domain.mappers.toWeatherUiModel
 import com.example.openweather.domain.repository.OpenWeatherRepository
 import com.example.openweather.presentation.models.ForecastUiModel
-import com.example.openweather.presentation.models.WeatherUiModel
+import com.example.openweather.presentation.models.CurrentWeatherUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +24,7 @@ class OpenWeatherRepositoryImpl(
     ): Resource<ImmutableList<ForecastUiModel>> {
         return withContext(Dispatchers.IO) {
             try {
-                Resource.Loading<WeatherUiModel>()
+                Resource.Loading<CurrentWeatherUiModel>()
 
                 val fiveDayForecast = openWeatherApiService.getFiveDayWeatherForecast(
                     latitude = latitude,
@@ -47,10 +47,10 @@ class OpenWeatherRepositoryImpl(
     override suspend fun getCurrentWeather(
         latitude: String,
         longitude: String
-    ): Resource<WeatherUiModel> {
+    ): Resource<CurrentWeatherUiModel> {
         return withContext(Dispatchers.IO) {
             try {
-                Resource.Loading<WeatherUiModel>()
+                Resource.Loading<CurrentWeatherUiModel>()
 
                 val weather = openWeatherApiService.getCurrentWeather(
                     latitude = latitude,

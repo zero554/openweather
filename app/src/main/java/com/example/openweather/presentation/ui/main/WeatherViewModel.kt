@@ -6,7 +6,7 @@ import com.example.openweather.common.Resource
 import com.example.openweather.domain.usecase.GetCurrentLocationUseCase
 import com.example.openweather.domain.usecase.GetWeatherUseCase
 import com.example.openweather.presentation.models.Location
-import com.example.openweather.presentation.models.WeatherUiModel
+import com.example.openweather.presentation.models.CurrentWeatherUiModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +37,7 @@ class WeatherViewModel(
                 }
                 is Resource.Success -> _weatherUiState.update {
                     WeatherUiState(
-                        weatherUiModel = resource.data?.current ?: WeatherUiModel(),
+                        currentWeatherUiModel = resource.data?.current ?: CurrentWeatherUiModel(),
                         fiveDayForecast = resource.data?.fiveDayForecast ?: persistentListOf()
                     )
                 }

@@ -12,15 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.openweather.presentation.models.WeatherCondition
-import com.example.openweather.presentation.models.WeatherUiModel
+import com.example.openweather.presentation.models.CurrentWeatherUiModel
 import com.example.openweather.presentation.ui.theme.OpenWeatherTheme
 import com.example.openweather.presentation.ui.theme.Rainy
 
 @Composable
 fun WeatherHeader(
-    weatherUiModel: WeatherUiModel,
+    currentWeatherUiModel: CurrentWeatherUiModel,
     modifier: Modifier = Modifier
-) = with(weatherUiModel) {
+) = with(currentWeatherUiModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -44,7 +44,7 @@ fun WeatherHeader(
 @Preview(showBackground = true)
 @Composable
 private fun WeatherHeaderPreview() {
-    val weatherUiModel = WeatherUiModel(
+    val currentWeatherUiModel = CurrentWeatherUiModel(
         min = "10",
         current = "15",
         max = "17",
@@ -58,7 +58,7 @@ private fun WeatherHeaderPreview() {
                 .background(Rainy)
                 .fillMaxSize()
         ) {
-            WeatherHeader(weatherUiModel = weatherUiModel)
+            WeatherHeader(currentWeatherUiModel = currentWeatherUiModel)
         }
     }
 }

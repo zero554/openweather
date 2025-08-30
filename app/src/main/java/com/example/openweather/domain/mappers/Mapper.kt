@@ -4,7 +4,7 @@ import com.example.openweather.data.remote.dto.CurrentWeatherDto
 import com.example.openweather.data.remote.dto.WeatherItem
 import com.example.openweather.presentation.models.ForecastUiModel
 import com.example.openweather.presentation.models.WeatherCondition
-import com.example.openweather.presentation.models.WeatherUiModel
+import com.example.openweather.presentation.models.CurrentWeatherUiModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -24,10 +24,10 @@ fun WeatherItem.toForeCastUiModel(): ForecastUiModel {
     )
 }
 
-fun CurrentWeatherDto.toWeatherUiModel(): WeatherUiModel {
+fun CurrentWeatherDto.toWeatherUiModel(): CurrentWeatherUiModel {
     val weatherCondition = weather[0].main
 
-    return WeatherUiModel(
+    return CurrentWeatherUiModel(
         current = main.temp.toInt().toString(),
         min = main.tempMin.toInt().toString(),
         max = main.tempMax.toInt().toString(),
