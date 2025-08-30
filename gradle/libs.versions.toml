@@ -9,7 +9,7 @@ lifecycleRuntimeKtx = "2.9.3"
 activityCompose = "1.10.1"
 composeBom = "2025.08.00"
 googleFonts = "1.9.0"
-ksp = "2.1.21-2.0.2"
+ksp = "2.0.21-1.0.25"
 kotlinxCoroutines = "1.8.1"
 kotlinxCollectionsImmutable = "0.3.7"
 navigationCompose = "2.9.3"
@@ -22,6 +22,7 @@ kotlinx = "0.6.0"
 kotlinxPlayServices = "1.8.1"
 playServices = "21.3.0"
 accompanist = "0.32.0"
+room = "2.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -57,7 +58,8 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinxPlayServices"}
 google-accompanist = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 android-gms = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServices"}
-
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -65,3 +67,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+room = { id = "androidx.room", version.ref = "room" }
