@@ -1,4 +1,4 @@
-package com.example.openweather.presentation.ui.main
+package com.example.openweather.presentation.ui.weather
 
 import com.example.openweather.presentation.models.ForecastUiModel
 import com.example.openweather.presentation.models.WeatherUiModel

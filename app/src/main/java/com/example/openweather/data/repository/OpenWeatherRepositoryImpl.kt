@@ -2,6 +2,7 @@ package com.example.openweather.data.repository
 
 import com.example.openweather.common.Resource
 import com.example.openweather.data.database.dao.WeatherWithForecastDao
+import com.example.openweather.data.database.entities.WeatherEntity
 import com.example.openweather.data.database.entities.WeatherWithForecast
 import com.example.openweather.data.remote.OpenWeatherApiService
 import com.example.openweather.domain.mappers.onePerDay
@@ -27,6 +28,12 @@ class OpenWeatherRepositoryImpl(
     private val openWeatherApiService: OpenWeatherApiService,
     private val weatherWithForecastDao: WeatherWithForecastDao,
 ) : OpenWeatherRepository {
+    override suspend fun insertWeather(weatherEntity: WeatherEntity) {
+        withContext(Dispatchers.IO) {
+            weatherWithForecastDao.insertWeather(weatherEntity)
+        }
+    }
+
     override suspend fun getFiveDayForecast(
         latitude: String,
         longitude: String

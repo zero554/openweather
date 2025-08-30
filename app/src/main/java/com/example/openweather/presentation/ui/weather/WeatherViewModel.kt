@@ -1,8 +1,9 @@
-package com.example.openweather.presentation.ui.main
+package com.example.openweather.presentation.ui.weather
 
 import androidx.lifecycle.viewModelScope
 import com.example.openweather.BaseViewModel
 import com.example.openweather.common.Resource
+import com.example.openweather.domain.usecase.FavouriteWeatherUseCase
 import com.example.openweather.domain.usecase.GetCurrentLocationUseCase
 import com.example.openweather.domain.usecase.GetWeatherUseCase
 import com.example.openweather.presentation.models.Location
@@ -18,11 +19,27 @@ import kotlinx.coroutines.flow.update
 
 class WeatherViewModel(
     private val getCurrentLocationUseCase: GetCurrentLocationUseCase,
-    private val getWeatherUseCase: GetWeatherUseCase
+    private val getWeatherUseCase: GetWeatherUseCase,
+    private val favouriteWeatherUseCase: FavouriteWeatherUseCase
 ) : BaseViewModel() {
 
     private val _weatherUiState: MutableStateFlow<WeatherUiState?> = MutableStateFlow(null)
     val weatherUiState: StateFlow<WeatherUiState?> by ::_weatherUiState
+
+    fun handleUiEvents(event: WeatherUiEvent) {
+        if (event is WeatherUiEvent.TopAppBarAction.FavouriteClick) {
+            setWeatherAsFavourite(event.weatherUiModel)
+        }
+    }
+
+    private fun setWeatherAsFavourite(weatherUiModel: WeatherUiModel) = runCoroutine {
+        val updated = weatherUiModel.favourite()
+        _weatherUiState.update { it?.copy(weatherUiModel = updated) }
+
+        favouriteWeatherUseCase(updated)
+    }
+
+    private fun WeatherUiModel.favourite(): WeatherUiModel = this.copy(isFavourite = !this.isFavourite)
 
     private fun getWeatherData(location: Location) = runCoroutine {
         getWeatherUseCase(
