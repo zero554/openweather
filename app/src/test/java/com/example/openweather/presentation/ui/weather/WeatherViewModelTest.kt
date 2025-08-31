@@ -30,11 +30,7 @@ class WeatherViewModelTest: BaseViewModelTest() {
 
     @Before
     fun setUp() {
-        viewModel = getViewModel(
-            getCurrentLocationUseCase = getCurrentLocationUseCase,
-            getWeatherUseCase = getWeatherUseCase,
-            favouriteWeatherUseCase = favouriteWeatherUseCase
-        )
+        viewModel = getViewModel()
     }
 
     @Test
@@ -124,19 +120,11 @@ class WeatherViewModelTest: BaseViewModelTest() {
         assertThat(state?.weatherUiModel?.isFavourite).isEqualTo(true)
     }
 
-    private fun getViewModel(
-        getCurrentLocationUseCase: GetCurrentLocationUseCase,
-        getWeatherUseCase: GetWeatherUseCase,
-        favouriteWeatherUseCase: FavouriteWeatherUseCase
-
-    ): WeatherViewModel {
+    private fun getViewModel(): WeatherViewModel {
         return WeatherViewModel(
             getCurrentLocationUseCase = getCurrentLocationUseCase,
             getWeatherUseCase = getWeatherUseCase,
             favouriteWeatherUseCase = favouriteWeatherUseCase
         )
     }
-
-
-
 }

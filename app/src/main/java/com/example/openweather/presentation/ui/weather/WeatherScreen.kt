@@ -161,9 +161,9 @@ fun getBackgroundColor(weatherCondition: WeatherCondition): Color {
     val color by remember(weatherCondition) {
         derivedStateOf {
             when (weatherCondition) {
-                WeatherCondition.RAINY -> Rainy
                 WeatherCondition.SUNNY -> Sunny
                 WeatherCondition.CLOUDY -> Cloudy
+                else -> Rainy
             }
         }
     }
@@ -181,6 +181,7 @@ fun getBackgroundImage(
                 WeatherCondition.RAINY -> R.drawable.forest_rainy
                 WeatherCondition.SUNNY -> R.drawable.forest_sunny
                 WeatherCondition.CLOUDY -> R.drawable.forest_cloudy
+                WeatherCondition.UNKNOWN -> R.drawable.unknown_med_24px
             }
         }
     }

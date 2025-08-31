@@ -78,6 +78,7 @@ fun getWeatherIcon(
                 WeatherCondition.RAINY -> R.drawable.rain_3x
                 WeatherCondition.SUNNY -> R.drawable.clear_3x
                 WeatherCondition.CLOUDY -> R.drawable.partlysunny_3x
+                else -> R.drawable.unknown_med_24px
             }
         }
     }
