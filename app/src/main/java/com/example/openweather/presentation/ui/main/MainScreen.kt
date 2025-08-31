@@ -52,8 +52,6 @@ fun MainScreen(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    val route = navBackStackEntry?.destination?.route
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()

@@ -9,7 +9,8 @@ private val LightColorScheme = lightColorScheme(
     primary = Sunny,
     secondary = Cloudy,
     tertiary = Rainy,
-    onBackground = Color.White
+    onBackground = Color.White,
+    background = Rainy
 )
 
 @Composable

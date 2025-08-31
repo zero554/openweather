@@ -17,4 +17,8 @@ interface OpenWeatherRepository {
     suspend fun getCurrentWeather(latitude: String, longitude: String): Resource<WeatherUiModel>
 
     suspend fun getWeatherWithForecast(latitude: Double, longitude: Double): Flow<Resource<WeatherWithForecast?>>
+
+    fun getFavouriteLocations(): Flow<List<WeatherUiModel>>
+
+    suspend fun getLocationName(latitude: Double, longitude: Double): String?
 }

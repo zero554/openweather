@@ -6,7 +6,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 data class WeatherUiState(
-    val weatherUiModel: WeatherUiModel = WeatherUiModel(),
+    val weatherUiModel: WeatherUiModel? = null,
     val fiveDayForecast: ImmutableList<ForecastUiModel> = persistentListOf(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
