@@ -138,60 +138,6 @@ class OpenWeatherRepositoryImpl(
     private suspend fun fetchFiveDayForecast(latitude: Double, longitude: Double) =
         openWeatherApiService.getFiveDayWeatherForecast(latitude.toInt().toString(), longitude.toInt().toString())
 
-
-//    override suspend fun getWeatherWithForecast(latitude: Double, longitude: Double): Flow<Resource<WeatherWithForecast?>> =
-//        flow {
-//            coroutineScope {
-//                try {
-//                    emit(Resource.Loading())
-//                    val cached = weatherWithForecastDao.getWeatherWithForecast(latitude = latitude, longitude = longitude)
-//                    emit(Resource.Success(cached)) // immediate local display
-//
-//                    if (shouldFetchFromNetwork(cached?.current?.lastUpdated)) {
-//                        val currentDay = async {
-//                            openWeatherApiService.getCurrentWeather(
-//                                latitude = latitude.toInt().toString(),
-//                                longitude = longitude.toInt().toString()
-//                            )
-//                        }
-//
-//                        val fiveDayForecast = async {
-//                            openWeatherApiService.getFiveDayWeatherForecast(
-//                                latitude = latitude.toInt().toString(),
-//                                longitude = longitude.toInt().toString()
-//                            )
-//                        }
-//
-//                        val forecastEntries = fiveDayForecast.await()
-//                            .list
-//                            .onePerDay()
-//                            .map {
-//                                it.toForeCastEntity(
-//                                    latitude = latitude,
-//                                    longitude = longitude,
-//                                )
-//                            }
-//
-//                        weatherWithForecastDao.addCurrentWeatherWithForecast(
-//                            weatherEntity = currentDay.await().toWeatherEntity(
-//                                latitude = latitude,
-//                                longitude = longitude
-//                            ),
-//                            forecasts = forecastEntries
-//                        )
-//
-//                        emit(
-//                            Resource.Success(weatherWithForecastDao.getWeatherWithForecast(latitude = latitude, longitude = longitude))
-//                        )
-//                    }
-//                } catch (exception: HttpException) {
-//                    emit(Resource.Error(exception.localizedMessage ?: "An unexpected error occurred"))
-//                } catch (exception: IOException) {
-//                    emit(Resource.Error("Could not reach server. Check your internet connection"))
-//                }
-//            }
-//        }.flowOn(Dispatchers.IO)
-
     override fun getFavouriteLocations(): Flow<List<WeatherUiModel>> {
         return weatherDao
             .getFavouriteLocations()
