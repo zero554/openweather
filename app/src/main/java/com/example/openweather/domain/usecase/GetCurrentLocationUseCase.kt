@@ -24,21 +24,21 @@ class GetCurrentLocationUseCaseImpl(
         try {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-            // Step 1: Try last known location
             var location = fusedLocationClient.lastLocation
 
-            // Step 2: If last location is null, request a fresh one
             if (location.await() == null) {
                 location = fusedLocationClient
                     .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
             }
 
-            // Step 3: Update StateFlow
             location.await()?.let {
+                val latitudeRounded = "%.6f".format(it.latitude).toDouble()
+                val longitudeRounded = "%.6f".format(it.longitude).toDouble()
+
                 emit(
                     Location(
-                        latitude = it.latitude,
-                        longitude = it.longitude
+                        latitude = latitudeRounded,
+                        longitude = longitudeRounded
                     )
                 )
             }
