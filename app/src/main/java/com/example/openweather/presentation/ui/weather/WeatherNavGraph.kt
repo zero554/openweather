@@ -51,16 +51,11 @@ fun NavGraphBuilder.weatherNavigationGraph(navController: NavHostController) {
 
             observeUiEvents(viewModel.uiEvents) { onUiEvent(navController, it) }
 
-            FavouriteScreen(
-                favouriteUiState = FavouriteUiState(
-                    locations = persistentListOf()
+            favouriteUiState?.let {
+                FavouriteScreen(
+                    favouriteUiState = it
                 )
-            )
-//            favouriteUiState?.let {
-//                FavouriteScreen(
-//                    favouriteUiState = it
-//                )
-//            }
+            }
         }
     }
 }

@@ -1,14 +1,13 @@
 package com.example.openweather.presentation.ui.weather
 
-import android.graphics.Bitmap
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
+import android.graphics.drawable.BitmapDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -17,18 +16,23 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.palette.graphics.Palette
 import com.example.openweather.R
 import com.example.openweather.presentation.components.WeatherHeader
 import com.example.openweather.presentation.components.WeatherRow
@@ -52,20 +56,19 @@ fun WeatherScreen(
     events: (WeatherUiEvent) -> Unit
 
 ) = with(weatherUiState) {
-    val scaffoldViewState = LocalScaffoldViewState.current
-    val color by animateColorAsState(
-        targetValue = if (weatherUiModel.isFavourite) Color.White else Color.Black,
-        animationSpec = tween(durationMillis = 500)
-    )
+    val color = if (weatherUiModel != null) getBackgroundColor(weatherUiModel.weatherCondition) else Color.White
 
-    val topAppBarState = remember(weatherUiModel.isFavourite) {
+    val scaffoldViewState = LocalScaffoldViewState.current
+
+    val topAppBarState = remember(weatherUiModel?.isFavourite) {
         TopAppBarState(
             icon = Icons.Default.Menu,
+            containerColour =  color,
             actions = persistentListOf(
                 TopBarAction(
                     icon = Icons.Default.Favorite,
-                    tint = color,
-                    onClick = { events(WeatherUiEvent.TopAppBarAction.FavouriteClick(weatherUiModel)) }
+                    tint = if (weatherUiModel?.isFavourite == true) Color.Black else Color.White,
+                    onClick = { events(WeatherUiEvent.TopAppBarAction.FavouriteClick) }
                 )
             )
         )
@@ -74,21 +77,33 @@ fun WeatherScreen(
     DisposableEffect(topAppBarState) {
         scaffoldViewState.topAppBarState = topAppBarState
         onDispose {
-            // Only clear if no one else has replaced it
+            // Only clear if no screen else has replaced it
             if (scaffoldViewState.topAppBarState === topAppBarState) {
                 scaffoldViewState.topAppBarState = null
             }
         }
     }
 
-    if (isLoading) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-        ) { CircularProgressIndicator() }
-    } else ScreenContent(weatherUiState = this, modifier = modifier)
-
+    when {
+        isLoading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) { CircularProgressIndicator() }
+        }
+        errorMessage != null -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) { Text(
+                text = errorMessage,
+                modifier = Modifier.padding(16.dp)
+            ) }
+        }
+        else -> ScreenContent(weatherUiState = this, modifier = modifier)
+    }
 }
 
 @Composable
@@ -96,23 +111,25 @@ fun ScreenContent(
     weatherUiState: WeatherUiState,
     modifier: Modifier = Modifier
 ) = with (weatherUiState){
-    Column(
-        modifier = modifier
-            .background(color = getBackgroundColor(weatherUiModel.weatherCondition))
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        WeatherHeaderBackground(weatherUiModel)
+    weatherUiModel?.let {
+        Column(
+            modifier = modifier
+                .background(color = getBackgroundColor(weatherUiModel.weatherCondition))
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            WeatherHeaderBackground(weatherUiModel)
 
-        WeatherTitle(weatherUiModel)
+            WeatherTitle(weatherUiModel)
 
-        HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
+            HorizontalDivider(color = MaterialTheme.colorScheme.onBackground)
 
-        fiveDayForecast.forEach {
-            WeatherRow(
-                forecastUiModel = it,
-                weatherCondition = weatherUiModel.weatherCondition,
-            )
+            fiveDayForecast.forEach {
+                WeatherRow(
+                    forecastUiModel = it,
+                    weatherCondition = weatherUiModel.weatherCondition,
+                )
+            }
         }
     }
 }
@@ -171,49 +188,32 @@ fun getBackgroundImage(
     return resource
 }
 
-fun averageColor(bitmap: Bitmap): Color {
-    var r = 0
-    var g = 0
-    var b = 0
-    var count = 0
+@Composable
+fun extractColorFromDrawable(drawableRes: Int, defaultColor: Color = Color.Unspecified): Color {
+    val context = LocalContext.current
 
-    for (x in 0 until bitmap.width step 10) { // step to speed up
-        for (y in 0 until bitmap.height step 10) {
-            val pixel = bitmap.getPixel(x, y)
-            r += (pixel shr 16 and 0xFF)
-            g += (pixel shr 8 and 0xFF)
-            b += (pixel and 0xFF)
-            count++
+    // produceState runs a suspend block and updates the value
+    val color by produceState(initialValue = defaultColor, key1 = drawableRes) {
+        val drawable = ContextCompat.getDrawable(context, drawableRes)
+        if (drawable is BitmapDrawable) {
+            val bitmap = drawable.bitmap
+            val palette = Palette.from(bitmap).generate()
+            palette.dominantSwatch?.rgb?.let { rgb ->
+                value = Color(rgb)
+            }
         }
     }
 
-    return Color(r / count, g / count, b / count)
+    return color
 }
-
-//@Composable
-//fun extractColorFromDrawable(
-//    drawableRes: Int,
-//    onColorReady: (Color) -> Unit
-//) {
-//    val context = LocalContext.current
-//
-//    LaunchedEffect(drawableRes) {
-//        val drawable = ContextCompat.getDrawable(context, drawableRes)
-//        val bitmap = (drawable as BitmapDrawable).bitmap
-//
-//        // Use Palette to get dominant color
-//        Palette.from(bitmap).generate { palette ->
-//            palette?.dominantSwatch?.rgb?.let { rgb ->
-//                onColorReady(Color(rgb))
-//            }
-//        }
-//    }
-//}
 
 @Preview
 @Composable
 private fun WeatherScreenPreview() {
     val weatherUiModel = WeatherUiModel(
+        latitude = 0.0,
+        longitude = 0.0,
+        lastUpdated = 0L,
         min = "10",
         current = "25",
         max = "17",

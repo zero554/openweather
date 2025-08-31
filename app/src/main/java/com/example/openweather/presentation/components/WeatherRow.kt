@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.openweather.R
@@ -42,7 +43,9 @@ fun WeatherRow(
         Text(
             text = day,
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = MaterialTheme.typography.titleMedium.fontSize
+            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            modifier = Modifier
+                .weight(1f)
         )
 
         Image(
@@ -50,13 +53,17 @@ fun WeatherRow(
             contentDescription = weatherCondition.toString(),
             modifier = Modifier
                 .size(24.dp)
+                .weight(1f)
         )
 
 
         Text(
             text = "${current}\u00B0",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = MaterialTheme.typography.titleMedium.fontSize
+            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+            textAlign = TextAlign.End,
+            modifier = Modifier
+                .weight(1f)
         )
     }
 }

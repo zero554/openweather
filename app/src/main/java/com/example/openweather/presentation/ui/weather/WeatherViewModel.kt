@@ -11,6 +11,7 @@ import com.example.openweather.presentation.models.WeatherUiModel
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
@@ -28,23 +29,29 @@ class WeatherViewModel(
 
     fun handleUiEvents(event: WeatherUiEvent) {
         if (event is WeatherUiEvent.TopAppBarAction.FavouriteClick) {
-            setWeatherAsFavourite(event.weatherUiModel)
+            setWeatherAsFavourite()
         }
     }
 
-    private fun setWeatherAsFavourite(weatherUiModel: WeatherUiModel) = runCoroutine {
-        val updated = weatherUiModel.favourite()
-        _weatherUiState.update { it?.copy(weatherUiModel = updated) }
+    private fun setWeatherAsFavourite() = runCoroutine {
+        val weather = _weatherUiState.value?.weatherUiModel
 
-        favouriteWeatherUseCase(updated)
+        weather?.let {
+            val updated = it.copy(isFavourite = !it.isFavourite)
+            _weatherUiState.update { state ->
+                state?.copy(weatherUiModel = updated)
+            }
+
+            favouriteWeatherUseCase(updated)
+        }
     }
-
-    private fun WeatherUiModel.favourite(): WeatherUiModel = this.copy(isFavourite = !this.isFavourite)
 
     private fun getWeatherData(location: Location) = runCoroutine {
         getWeatherUseCase(
             location = location
-        ).onEach { resource ->
+        ).catch { exception ->
+            _weatherUiState.update { WeatherUiState(errorMessage = exception.localizedMessage ?: "Unknown error") }
+        }.onEach { resource ->
             when(resource) {
                 is Resource.Loading -> {
                     _weatherUiState.update { WeatherUiState(isLoading = true) }
@@ -54,7 +61,7 @@ class WeatherViewModel(
                 }
                 is Resource.Success -> _weatherUiState.update {
                     WeatherUiState(
-                        weatherUiModel = resource.data?.current ?: WeatherUiModel(),
+                        weatherUiModel = resource.data?.current,
                         fiveDayForecast = resource.data?.fiveDayForecast ?: persistentListOf()
                     )
                 }

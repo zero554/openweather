@@ -52,8 +52,6 @@ fun MainScreen(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-    val route = navBackStackEntry?.destination?.route
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()
@@ -77,7 +75,7 @@ fun MainScreen(
                     with(it) {
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primary
+                                containerColor = it.containerColour
                             ),
                             title = {
                                 Row(

@@ -16,6 +16,6 @@ interface WeatherDao {
     @Delete
     suspend fun deleteWeather(current: WeatherEntity)
 
-    @Query("SELECT * FROM weather")
-    fun getAllWeather(): Flow<List<WeatherEntity>>
+    @Query("SELECT * FROM weather WHERE isFavourite = 1")
+    fun getFavouriteLocations(): Flow<List<WeatherEntity>>
 }
