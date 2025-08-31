@@ -36,11 +36,10 @@ The implementation uses the [MVVM](https://developer.android.com/jetpack/guide#r
 
 ## Architecture Diagram
 
-```mermaid
 flowchart TD
-    A[MainActivity (Scaffold)] --> B[TopAppBar]
-    B --> B1[Menu Icon -> Open Navigation Drawer]
-    B --> B2[Favorite Icon -> Add Current Location]
+    A[MainActivity] --> B[TopAppBar]
+    B --> B1[Menu Icon opens Navigation Drawer]
+    B --> B2[Favorite Icon adds Current Location]
     A --> C[Navigation Drawer]
     C --> C1[Favorite Locations List]
     A --> D[NavHost / Screens]
@@ -48,10 +47,11 @@ flowchart TD
     D --> F[FavouritesScreen]
 
     E --> G[LazyColumn of Forecast Items]
-    G --> H[Forecast Item (Composable)]
+    G --> H[Forecast Item]
 
     Repository -->|Fetch/Store| RoomDatabase
     Repository -->|Fetch| OpenWeatherAPI
     ViewModel --> Repository
     E --> ViewModel
     F --> ViewModel
+
