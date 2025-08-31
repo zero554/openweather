@@ -46,6 +46,7 @@ fun FavouriteScreen(
     }
 
     Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier
             .padding(16.dp)
     ) {
