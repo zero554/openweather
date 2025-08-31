@@ -2,8 +2,10 @@ package com.example.openweather.presentation.ui.favourites
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -45,16 +47,30 @@ fun FavouriteScreen(
         }
     }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = modifier
-            .padding(16.dp)
-    ) {
-        locations.forEach {
-            Location(favouriteUiModel = it)
+    if (locations.isEmpty()) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "It looks like you haven't added any locations to your favorites.",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize
+            )
+        }
+    } else {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = modifier
+                .padding(16.dp)
+        ) {
+            locations.forEach {
+                Location(favouriteUiModel = it)
+            }
         }
     }
-
 }
 
 @Composable
