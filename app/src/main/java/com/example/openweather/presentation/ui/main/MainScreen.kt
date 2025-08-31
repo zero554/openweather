@@ -75,7 +75,7 @@ fun MainScreen(
                     with(it) {
                         TopAppBar(
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primary
+                                containerColor = it.containerColour
                             ),
                             title = {
                                 Row(

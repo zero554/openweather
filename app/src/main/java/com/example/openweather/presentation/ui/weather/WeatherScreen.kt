@@ -1,5 +1,6 @@
 package com.example.openweather.presentation.ui.weather
 
+import android.graphics.drawable.BitmapDrawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,14 +21,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.palette.graphics.Palette
 import com.example.openweather.R
 import com.example.openweather.presentation.components.WeatherHeader
 import com.example.openweather.presentation.components.WeatherRow
@@ -51,11 +56,14 @@ fun WeatherScreen(
     events: (WeatherUiEvent) -> Unit
 
 ) = with(weatherUiState) {
+    val color = if (weatherUiModel != null) getBackgroundColor(weatherUiModel.weatherCondition) else Color.White
+
     val scaffoldViewState = LocalScaffoldViewState.current
 
     val topAppBarState = remember(weatherUiModel?.isFavourite) {
         TopAppBarState(
             icon = Icons.Default.Menu,
+            containerColour =  color,
             actions = persistentListOf(
                 TopBarAction(
                     icon = Icons.Default.Favorite,
@@ -180,25 +188,24 @@ fun getBackgroundImage(
     return resource
 }
 
-//@Composable
-//fun extractColorFromDrawable(
-//    drawableRes: Int,
-//    onColorReady: (Color) -> Unit
-//) {
-//    val context = LocalContext.current
-//
-//    LaunchedEffect(drawableRes) {
-//        val drawable = ContextCompat.getDrawable(context, drawableRes)
-//        val bitmap = (drawable as BitmapDrawable).bitmap
-//
-//        // Use Palette to get dominant color
-//        Palette.from(bitmap).generate { palette ->
-//            palette?.dominantSwatch?.rgb?.let { rgb ->
-//                onColorReady(Color(rgb))
-//            }
-//        }
-//    }
-//}
+@Composable
+fun extractColorFromDrawable(drawableRes: Int, defaultColor: Color = Color.Unspecified): Color {
+    val context = LocalContext.current
+
+    // produceState runs a suspend block and updates the value
+    val color by produceState(initialValue = defaultColor, key1 = drawableRes) {
+        val drawable = ContextCompat.getDrawable(context, drawableRes)
+        if (drawable is BitmapDrawable) {
+            val bitmap = drawable.bitmap
+            val palette = Palette.from(bitmap).generate()
+            palette.dominantSwatch?.rgb?.let { rgb ->
+                value = Color(rgb)
+            }
+        }
+    }
+
+    return color
+}
 
 @Preview
 @Composable

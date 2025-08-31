@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class TopAppBarState(
     val title: String = "",
-//    val containerColour: Color,
+    val containerColour: Color = Color.Unspecified,
     val icon: ImageVector? = null,
     val navIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     val showNavIcon: Boolean = false,
